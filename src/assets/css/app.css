@@ -1,6 +1,9 @@
 html, body {
     margin: 0;
 }
+a {
+    cursor: pointer;
+}
 .app {
     background-color: rgb(237, 240, 245);
     font-size: 14px;
@@ -40,5 +43,201 @@ text-decoration: none;
 transition: background-color 0.3s ease;
 }
 .app-header_toggle:hover {
-background-color: rgba(0, 31, 86, 0.5);
+  background-color: rgba(0, 31, 86, 0.5);
+}
+.app-aside {
+    position: fixed;
+    top: 0;
+    left: 0;
+    margin-top: 50px;
+    width: 230px;
+    min-height: calc(100vh);
+    overflow: auto;
+    z-index: 10;
+    background-color: #ffffff;
+    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    -webkit-transition: left 0.3s ease, width 0.3s ease;
+    -o-transition: left 0.3s ease, width 0.3s ease;
+    transition: left 0.3s ease, width 0.3s ease;
+}
+.app-aside .app-menu, .app-aside .treeview-menu {
+    padding-left: 0;
+    margin: 0;
+    list-style: none;
+}
+.app-aside .app-menu__item {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  color: rgba(0, 0, 0, 0.65);
+  text-decoration: none;
+  padding: 12px 15px;
+  font-size: 1.08em;
+  -webkit-transition: background-color 0.3s ease;
+  -o-transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease;
+}
+.app-aside .app-menu__item:hover, .app-aside .app-menu__item.active {
+    background: #e7f2fe;
+    text-decoration: none;
+    color: #1280F2;
+}
+.app-aside .app-menu__item svg:first-child {
+  margin-right: 5px;
+  width: 25px;
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 auto;
+  flex: 0 0 auto;
+}
+.app-aside .app-menu__item svg:last-child {
+  -webkit-transform-origin: center;
+  -ms-transform-origin: center;
+  transform-origin: center;
+  -webkit-transition: -webkit-transform 0.3s ease;
+  transition: -webkit-transform 0.3s ease;
+  -o-transition: transform 0.3s ease;
+  transition: transform 0.3s ease;
+}
+.app-aside .app-menu__label{
+    white-space: nowrap;
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+}
+.app-aside .treeview-menu {
+  max-height: 0;
+  overflow: hidden;
+  -webkit-transition: max-height 0.3s ease;
+  -o-transition: max-height 0.3s ease;
+  transition: max-height 0.3s ease;
+  background: rgba(255, 255, 245, 0.8);
+}
+.app-aside .treeview.is-expanded .treeview-menu {
+  max-height: 100vh;
+  -webkit-transition: max-height 0.3s ease;
+  -o-transition: max-height 0.3s ease;
+  transition: max-height 0.3s ease;
+}
+.app-aside .treeview-item {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 5px 5px 5px 20px;
+  font-size: 1em;
+  color: rgba(0, 0, 0, 0.65);
+  text-decoration: none;
+  -webkit-transition: background-color 0.3s ease;
+  -o-transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease;
+}
+.app-aside .treeview-item:hover, .app-aside .treeview-item.active {
+  background: #e7f2fe;
+  text-decoration: none;
+  color: #1280F2;
+}
+.app-aside .treeview-item svg {
+    margin-right: 5px;
+    width: 16px;
+}
+.app-aside .treeview.active .app-menu__item{
+    background: #e7f2fe;
+    text-decoration: none;
+    color: #1280F2;
+}
+.mini .app-aside {
+  width: 50px;
+  overflow: hidden;
+}
+.mini .app-aside:hover {
+  overflow: visible;
+}
+.mini .app-aside .app-menu__item {
+  overflow: hidden;
+}
+.mini .app-aside .app-menu__item:hover {
+  overflow: visible;
+}
+.mini .app-aside .app-menu__item:hover .app-menu__label {
+  opacity: 1;
+}
+.mini .app-aside .app-menu__item:hover + .treeview-menu {
+  opacity: 1;
+  max-height: 100vh;
+  visibility: visible;
+  z-index: 10;
+}
+.mini .app-aside .app-menu__item svg:last-child {
+  display: none;
+}
+.mini .app-aside .app-menu__label {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  position: absolute;
+  background: #e7f2fe;
+  top: 0;
+  left: 50px;
+  min-width: 160px;
+  padding-left: 20px;
+  opacity: 0;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+.mini .app-aside .treeview.is-expanded.miniActive .app-menu__item {
+  background: #e7f2fe;
+  text-decoration: none;
+  color: #1280F2;
+}
+.mini .app-aside .treeview .app-menu__label {
+  border-bottom-right-radius: 0;
+}
+.mini .app-aside .treeview:hover .treeview-menu {
+  opacity: 1;
+  max-height: 100vh;
+  visibility: visible;
+  z-index: 10;
+}
+.mini .app-aside .treeview:hover .app-menu__item {
+  overflow: visible;
+}
+.mini .app-aside .treeview:hover .app-menu__label {
+  opacity: 1;
+}
+.mini .app-aside .treeview-menu {
+  position: absolute;
+  left: 50px;
+  min-width: 180px;
+  padding: 12px 0;
+  opacity: 0;
+  border-bottom-right-radius: 4px;
+  z-index: 9;
+  visibility: hidden;
+  -webkit-transition: visibility 0.3s ease;
+  -o-transition: visibility 0.3s ease;
+  transition: visibility 0.3s ease;
+  background: rgba(255, 255, 245, 0.8);
+}
+.mini .app-main {
+  margin: 50px 0 0 50px;
+}
+.app-main {
+    margin: 50px 0 0 230px;
+    padding:20px;
+    -webkit-transition: margin-left 0.3s ease;
+    -o-transition: margin-left 0.3s ease;
+    transition: margin-left 0.3s ease;
+  }
+.app-main .app-content {
+  background-color: #fff;
+  min-height: calc(100vh);
+  -webkit-box-shadow: -5px 5px 6px rgba(0, 0, 0, 0.1),5px -5px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: -5px 5px 6px rgba(0, 0, 0, 0.1),5px -5px 6px rgba(0, 0, 0, 0.1);
 }

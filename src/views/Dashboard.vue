@@ -1,7 +1,8 @@
 <template>
-  <div class="app">
+  <div class="app" :class="{'mini': mini}">
     <header class="app-header">
-      <Header />
+      <a class="app-header__logo" href="#">Docker管理平台</a>
+      <a @click="ToMini" class="app-header_toggle"><font-awesome-icon icon="align-justify" size="lg"/></a>
     </header>
     <aside class="app-aside">
       <Aside />
@@ -13,14 +14,23 @@
 </template>
 
 <script>
-import Header from '../components/Header.vue'
 import Aside from '../components/Aside.vue'
 import Main from '../components/Main.vue'
 
 export default {
   name: 'dashboard',
+  data () {
+    return {
+      mini: false
+    }
+  },
   components: {
-    Header, Aside, Main
+    Aside, Main
+  },
+  methods: {
+    ToMini () { // 小图标展示
+      this.mini = !this.mini
+    }
   }
 }
 </script>

@@ -1,158 +1,100 @@
 <template>
     <ul class="app-menu">
-      <li>
-          <a class="app-menu__item" href="/">
-            <font-awesome-icon icon="tachometer-alt" size="lg" fixed-width />
-            <span class="app-menu__label">Dashboard</span>
+      <li v-for="(menu, index) in menus" @click="showToggle(menu)" :key="index" :class="[{'miniActive': menu.active}, {'active': menu.active && !menu.is_expanded}, {'treeview': menu.secMenu}, {'is-expanded': menu.is_expanded}]">
+          <router-link v-if="!menu.secMenu" :class="['app-menu__item', {'active': menu.active} ]" :to="menu.url">
+            <font-awesome-icon :icon="menu.icon" size="lg" fixed-width />
+            <span class="app-menu__label">{{ menu.text }}</span>
+          </router-link>
+          <a v-else class="app-menu__item" data-toggle="treeview">
+            <font-awesome-icon :icon="menu.icon" size="lg" fixed-width />
+            <span class="app-menu__label">{{ menu.text }}</span>
+            <font-awesome-icon icon="angle-right" fixed-width :class="{'fa-rotate-90': menu.is_expanded}" />
           </a>
-      </li>
-      <li class="treeview" :class="{'is-expanded': is_expanded}">
-        <a class="app-menu__item" @click="toggleTreeMenu" href="#" data-toggle="treeview">
-          <font-awesome-icon icon="user-plus" size="lg" fixed-width />
-          <span class="app-menu__label">账户管理</span>
-          <font-awesome-icon icon="angle-right" fixed-width :class="{'fa-rotate-90': is_expanded}" />
-        </a>
-        <ul class="treeview-menu">
-          <li>
-            <a class="treeview-item" href="#">
-              <font-awesome-icon icon="user" size="md" fixed-width />用户管理
-            </a>
-          </li>
-          <li>
-            <a class="treeview-item" href="#">
-              <font-awesome-icon icon="users" size="md" fixed-width />用户组管理
-            </a>
-          </li>
-          <li>
-            <a class="treeview-item" href="#">
-              <font-awesome-icon icon="user-secret" size="md" fixed-width />角色管理
-            </a>
-          </li>
-          <li>
-            <a class="treeview-item" href="#">
-              <font-awesome-icon icon="user-lock" size="md" fixed-width />权限管理
-            </a>
-          </li>
-        </ul>
+          <ul v-if="menu.secMenu" class="treeview-menu">
+            <li v-for="(secMenu, index) in menu.secMenu" :key="index" @click.stop="showToggle(menu, secMenu)">
+              <router-link :class="['treeview-item', {'active': secMenu.active}]" :to="secMenu.url">
+                <font-awesome-icon :icon="secMenu.icon" size="sm" fixed-width />{{ secMenu.text }}
+              </router-link>
+            </li>
+          </ul>
       </li>
     </ul>
 </template>
 
 <script>
+import asideMenu from '../config/config.js'
 export default {
   name: 'Aside',
   data () {
     return {
-      is_expanded: false
+      menus: asideMenu
     }
   },
   methods: {
-    toggleTreeMenu () {
-      this.is_expanded = !this.is_expanded
+    showToggle (menu, secMenu) { // 展开二级菜单
+      if (secMenu) {
+        // 如果点击的是二级菜单, 设置其active为true, 其他的菜单active为false, 设置其父菜单is_expanded保持为true
+        secMenu.active = true
+        menu.is_expanded = true
+        menu.active = true
+        this.menus.forEach(function (item) {
+          if (!(item === menu)) {
+            item.active = false
+          }
+          if (item.secMenu) {
+            item.secMenu.forEach(function (secitem) {
+              if (!(secitem === secMenu)) {
+                secitem.active = false
+              }
+            })
+          }
+        })
+      } else {
+        // 如果点击的一级菜单有二级菜单,设置其is_expanded取反, 其他的is_expanded为false
+        if (menu.secMenu) {
+          menu.is_expanded = !menu.is_expanded
+          this.menus.forEach(function (item) {
+            if (!(item === menu)) {
+              item.is_expanded = false
+            }
+          })
+        } else {
+          // 如果点击的是一级菜单并且该一级菜单没有二级菜单时设置其active为true,其他所有菜单的active为false,is_expanded为false
+          menu.active = true
+          this.menus.forEach(function (item) {
+            if (!(item === menu)) {
+              item.is_expanded = false
+              item.active = false
+              if (item.secMenu) {
+                item.secMenu.forEach(function (secitem) {
+                  secitem.active = false
+                })
+              }
+            }
+          })
+        }
+      }
+    },
+    initToggle (rname) {
+      this.menus.forEach(function (item) {
+        if (item.name === rname) {
+          item.active = true
+        } else {
+          if (item.secMenu) {
+            item.secMenu.forEach(function (secitem) {
+              if (secitem.name === rname) {
+                secitem.active = true
+                item.is_expanded = true
+                item.active = true
+              }
+            })
+          }
+        }
+      })
     }
+  },
+  created () {
+    this.initToggle(this.$route.name)
   }
 }
 </script>
-<style>
-.app-aside {
-    position: fixed;
-    top: 0;
-    left: 0;
-    margin-top: 50px;
-    width: 230px;
-    min-height: calc(100vh);
-    overflow: auto;
-    z-index: 10;
-    background-color: #ffffff;
-    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    -webkit-transition: left 0.3s ease, width 0.3s ease;
-    -o-transition: left 0.3s ease, width 0.3s ease;
-    transition: left 0.3s ease, width 0.3s ease;
-}
-.app-aside .app-menu, .app-aside .treeview-menu {
-    padding-left: 0;
-    margin: 0;
-    list-style: none;
-}
-.app-aside .app-menu__item {
-  position: relative;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  color: rgba(0, 0, 0, 0.65);
-  text-decoration: none;
-  padding: 12px 15px;
-  font-size: 1.08em;
-  -webkit-transition: background-color 0.3s ease;
-  -o-transition: background-color 0.3s ease;
-  transition: background-color 0.3s ease;
-}
-.app-aside .app-menu__item:hover {
-    background: #e7f2fe;
-    text-decoration: none;
-    color: #1280F2;
-}
-.app-aside .app-menu__item svg:first-child {
-  margin-right: 5px;
-  width: 25px;
-  -webkit-box-flex: 0;
-  -ms-flex: 0 0 auto;
-  flex: 0 0 auto;
-}
-.app-aside .app-menu__item svg:last-child {
-  -webkit-transform-origin: center;
-  -ms-transform-origin: center;
-  transform-origin: center;
-  -webkit-transition: -webkit-transform 0.3s ease;
-  transition: -webkit-transform 0.3s ease;
-  -o-transition: transform 0.3s ease;
-  transition: transform 0.3s ease;
-}
-.app-aside .app-menu__label{
-    white-space: nowrap;
-    -webkit-box-flex: 1;
-    -ms-flex: 1 1 auto;
-    flex: 1 1 auto;
-}
-.app-aside .treeview-menu {
-  max-height: 0;
-  overflow: hidden;
-  -webkit-transition: max-height 0.3s ease;
-  -o-transition: max-height 0.3s ease;
-  transition: max-height 0.3s ease;
-}
-.app-aside .treeview.is-expanded .treeview-menu {
-  max-height: 100vh;
-  -webkit-transition: max-height 0.3s ease;
-  -o-transition: max-height 0.3s ease;
-  transition: max-height 0.3s ease;
-}
-.app-aside .treeview-item {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  padding: 5px 5px 5px 20px;
-  font-size: 1em;
-  color: rgba(0, 0, 0, 0.65);
-  text-decoration: none;
-  -webkit-transition: background-color 0.3s ease;
-  -o-transition: background-color 0.3s ease;
-  transition: background-color 0.3s ease;
-}
-.app-aside .treeview-item:hover, .app-aside .treeview-item.active {
-  background: #e7f2fe;
-  text-decoration: none;
-  color: #1280F2;
-}
-.app-aside .treeview-item svg {
-    margin-right: 5px;
-    width: 16px;
-}
-</style>

@@ -1,7 +1,5 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Dashboard from '../views/Dashboard.vue'
-import Login from '../views/Login.vue'
 
 Vue.use(VueRouter)
 
@@ -9,12 +7,18 @@ const routes = [
   {
     path: '/',
     name: 'dashboard',
-    component: Dashboard
+    component: () => import('../views/Dashboard.vue'),
+    children: [
+      { path: 'accounts/users', name: 'users', component: () => import('../components/UserList.vue') },
+      { path: 'accounts/groups', name: 'groups', component: () => import('../components/UserList.vue') },
+      { path: 'accounts/roles', name: 'roles', component: () => import('../components/UserList.vue') },
+      { path: 'accounts/permissions', name: 'permissions', component: () => import('../components/UserList.vue') }
+    ]
   },
   {
     path: '/login',
     name: 'login',
-    component: Login
+    component: () => import('../views/Login.vue')
   }
 ]
 
