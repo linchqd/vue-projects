@@ -241,3 +241,24 @@ transition: background-color 0.3s ease;
   -webkit-box-shadow: -5px 5px 6px rgba(0, 0, 0, 0.1),5px -5px 6px rgba(0, 0, 0, 0.1);
   box-shadow: -5px 5px 6px rgba(0, 0, 0, 0.1),5px -5px 6px rgba(0, 0, 0, 0.1);
 }
+
+/*@import '../assets/css/app.css';*/
+.app-login {
+  background-color: rgba(237, 240, 245, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.app-login .login-card {
+  width: 384px;
+}
+.app-login .login-card .login-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2em;
+  padding: 10px;
+  color: rgba(64, 108, 197, 0.8);
+  text-shadow:5px 2px 6px rgba(64, 108, 197, 0.5);
+}

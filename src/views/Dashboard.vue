@@ -31,6 +31,11 @@ export default {
     ToMini () { // 小图标展示
       this.mini = !this.mini
     }
+  },
+  mounted () {
+    window.onresize = () => {
+      this.mini = document.body.clientWidth <= 1024
+    }
   }
 }
 </script>
