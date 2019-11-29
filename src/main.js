@@ -16,10 +16,9 @@ import './assets/css/app.css'
 library.add(fas)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(ElementUI)
-reqtools.install(Vue)
+reqtools.install(Vue, router)
 // Vue.component('font-awesome-layers', FontAwesomeLayers)
 // Vue.component('font-awesome-layers-text', FontAwesomeLayersText)
-
 Vue.config.productionTip = false
 
 new Vue({

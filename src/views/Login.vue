@@ -57,8 +57,14 @@ export default {
         }
         this.loading = true
         this.$http.post('/accounts/login/', this.form).then(res => {
-          console.log(res)
-        })
+          console.log('---------')
+          // localStorage.setItem('token', res.result['token'])
+          // localStorage.setItem('is_supper', res.result['is_supper'])
+          // localStorage.setItem('permissions', res.result['permissions'])
+          // localStorage.setItem('nickname', res.result['nickname'])
+        }, response => {
+          console.log('-==========-')
+        }).finally(() => { this.loading = false })
       })
     }
   }
