@@ -1,8 +1,9 @@
 <template>
   <div class="app" :class="{'mini': mini}">
     <header class="app-header">
-      <a class="app-header__logo" href="#">Docker管理平台</a>
+      <a class="app-header__logo" href="/">Docker管理平台</a>
       <a @click="ToMini" class="app-header_toggle"><font-awesome-icon icon="align-justify" size="lg"/></a>
+      <a @click="Logout" type="button">Logout</a>
     </header>
     <aside class="app-aside">
       <Aside />
@@ -30,6 +31,10 @@ export default {
   methods: {
     ToMini () { // 小图标展示
       this.mini = !this.mini
+    },
+    Logout () {
+      localStorage.removeItem('token')
+      this.$router.push({ name: 'login' })
     }
   },
   mounted () {

@@ -3,7 +3,7 @@
     <el-row class="login-card">
       <div class="login-logo">DockerUI管理平台</div>
       <el-card>
-        <el-form ref="form" :model="form" :rules="rules">
+        <el-form ref="form" :model="form" :rules="rules" @keyup.enter.native="login_submit">
           <el-form-item prop="username">
             <el-input v-model="form.username" :autofocus="true" placeholder="username">
               <template slot="prepend">
@@ -51,19 +51,21 @@ export default {
   methods: {
     login_submit () {
       this.error_message = ''
-      this.$refs['form'].validate(res => {
-        if (!res) {
+      this.$refs['form'].validate(validate => {
+        if (!validate) {
           return false
         }
         this.loading = true
-        this.$http.post('/accounts/login/', this.form).then(res => {
-          console.log('---------')
-          // localStorage.setItem('token', res.result['token'])
-          // localStorage.setItem('is_supper', res.result['is_supper'])
-          // localStorage.setItem('permissions', res.result['permissions'])
-          // localStorage.setItem('nickname', res.result['nickname'])
-        }, response => {
-          console.log('-==========-')
+        this.$http.post('/accounts/login/', this.form).then(response => {
+          localStorage.setItem('token', response.res['token'])
+          localStorage.setItem('is_super', response.res['is_super'])
+          localStorage.setItem('permissions', response.res['permissions'])
+          localStorage.setItem('nickname', response.res['nickname'])
+          localStorage.setItem('username', response.res['username'])
+          this.$custom_message('success', '登录成功!')
+          this.$router.push('/')
+        }, error => {
+          this.$custom_message('error', error.res)
         }).finally(() => { this.loading = false })
       })
     }
