@@ -1,75 +1,81 @@
 <template>
   <div class="container-fluid">
     <div class="content-title">
-      <span>用户列表</span>
+      <span class="content-title-info">用户列表</span>
       <el-input size="mini" clearable placeholder="输入任意字段过滤" v-model="search" class="content-search"></el-input>
       <el-button type="primary" plain size="mini" @click.native="dialogFormVisible = true">添加</el-button>
-      <el-button type="danger" plain size="mini" :disabled="disabled">删除</el-button>
+      <el-popconfirm style="padding-left: 10px;" @onConfirm="user_del(select_users)" confirmButtonText='确认' cancelButtonText='取消' icon="el-icon-info" iconColor="red" title="Are you sure?">
+        <el-button type="danger" plain size="mini" slot="reference">删除</el-button>
+      </el-popconfirm>
     </div>
     <div class="content-content">
-      <el-table ref="multipleTable" @selection-change="handleSelectionChange" :data="user_list.filter(filterUserTable)" tooltip-effect="dark" style="width: 100%">
+      <el-table ref="multipleTable" @selection-change="handleSelectUser" :data="user_list.filter(filterUserTable).slice((current_page - 1) * page_size, page_size * current_page)" tooltip-effect="dark" style="width: 100%">
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="id" label="ID" width="60"></el-table-column>
-        <el-table-column prop="name" label="用户名" width="120" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="cname" label="用户别名" width="120" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="is_super" label="管理员" width="120" align="center">
+        <el-table-column prop="name" label="用户名" width="100" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="cname" label="用户别名" width="100" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="is_super" label="管理员" width="100" align="center">
           <template slot-scope="scope">
             <span v-if="scope.row.is_super" style="color:green">是</span>
             <span v-else style="color:#409EFF">否</span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态" width="120" align="center">
+        <el-table-column prop="status" label="状态" width="100" align="center">
           <template slot-scope="scope">
             <span v-if="scope.row.status" style="color:#409EFF">正常</span>
             <span v-else style="color:red">禁用</span>
           </template>
         </el-table-column>
-        <el-table-column prop="email" label="邮箱" width="120" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="phone_number" label="手机号码" width="120" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="email" label="邮箱" width="160" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="phone_number" label="手机号码" width="160" show-overflow-tooltip></el-table-column>
         <el-table-column label="操作" width="200">
           <template slot-scope="scope">
-            <el-button size="mini" plain type="primary" @click="handleEdit(scope.$index, scope.row)">管理</el-button>
-            <el-button size="mini" plain type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+            <el-button size="mini" plain type="primary" @click="goEdit(scope.row)">管理</el-button>
+            <el-popconfirm style="padding-left: 10px;" @onConfirm="user_del([scope.row.id])" confirmButtonText='确认' cancelButtonText='取消' icon="el-icon-info" iconColor="red" title="Are you sure?">
+              <el-button size="mini" plain type="danger" slot="reference">删除</el-button>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
+    </div>
+    <div class="content-pagination">
       <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page="currentPage4"
-      :page-sizes="[100, 200, 300, 400]"
-      :page-size="100"
+      :current-page="current_page"
+      :page-sizes="[10, 20, 50, 100]"
+      :page-size="page_size"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="400">
+      :total="user_list.filter(filterUserTable).length">
       </el-pagination>
-      <!--   dialog   -->
-      <el-dialog title="添加用户" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
+    </div>
+    <!--   add user dialog   -->
+    <el-dialog title="添加用户" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
         <el-form ref="user_add_form" :model="user_add_form" :rules="rules" label-width="80px">
           <el-form-item prop="name" label="登录名">
-              <el-input placeholder="请输入" v-model="user_add_form.name" auto-complete="off"></el-input>
+              <el-input placeholder="username" v-model="user_add_form.name" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item prop="cname" label="姓名">
-              <el-input placeholder="请输入" v-model="user_add_form.cname" auto-complete="off"></el-input>
+              <el-input placeholder="cname" v-model="user_add_form.cname" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item prop="password" label="密码" required>
-              <el-input placeholder="请输入" type="password" v-model="user_add_form.password" auto-complete="off"></el-input>
+              <el-input placeholder="password" type="password" v-model="user_add_form.password" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item prop="password2" label="确认密码" required>
-              <el-input placeholder="请输入" type="password" v-model="user_add_form.password2" auto-complete="off"></el-input>
+              <el-input placeholder="password" type="password" v-model="user_add_form.password2" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item prop="email" label="邮箱">
-              <el-input placeholder="请输入" v-model="user_add_form.email" auto-complete="off"></el-input>
+              <el-input placeholder="email" v-model="user_add_form.email" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item prop="phone_number" label="电话" required>
-              <el-input placeholder="请输入" v-model="user_add_form.phone_number" auto-complete="off"></el-input>
+              <el-input placeholder="phone number" v-model="user_add_form.phone_number" auto-complete="off"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="danger" size="small" plain @click.native="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" size="small" :loading="submit_loading" plain @click.native="user_add_form_submit">确 定</el-button>
+          <el-button type="primary" size="small" :loading="submit_loading" plain @click.native="add_user">确 定</el-button>
         </div>
       </el-dialog>
-    </div>
   </div>
 </template>
 <script>
@@ -109,10 +115,11 @@ export default {
       }
     }
     return {
-      disabled: true,
       search: '',
       user_list: [],
-      select_items: [],
+      select_users: [],
+      current_page: 1,
+      page_size: 10,
       dialogFormVisible: false,
       submit_loading: false,
       user_add_form: {
@@ -140,7 +147,7 @@ export default {
         password: [
           { validator: validatePwd, trigger: 'blur' }
         ],
-        checkPass: [
+        password2: [
           { validator: validatePwd2, trigger: 'blur' }
         ]
       }
@@ -154,34 +161,19 @@ export default {
         this.$custom_message('error', error.res)
       })
     },
-    handleSelectionChange (val) {
-      console.log(val)
-      // if (val.length > 0) {
-      //   val.forEach(item => {
-      //     this.multipleSelection.push(item.id)
-      //   })
-      // } else {
-      //   this.multipleSelection = []
-      // }
-      // console.log(this.multipleSelection)
-      // this.disabled = !this.multipleSelection.length > 0
-    },
-    handleSelect (val) {
-      if (val.length > 0) {
-        val.forEach(item => {
-          this.multipleSelection.push(item.id)
-        })
-      } else {
-        this.multipleSelection = []
+    handleSelectUser (val) {
+      this.select_users = []
+      for (let i = 0; i < val.length; i++) {
+        if (this.select_users.indexOf(val[i].id) === -1) {
+          this.select_users.push(val[i].id)
+        }
       }
-      console.log(this.multipleSelection)
-      this.disabled = !this.multipleSelection.length > 0
     },
-    handleEdit (index, row) {
-      console.log(index, row)
+    handleSizeChange (pagesize) {
+      this.page_size = pagesize
     },
-    handleDelete (index, row) {
-      console.log(index, row)
+    handleCurrentChange (currentpage) {
+      this.current_page = currentpage
     },
     filterUserTable (data) {
       return !this.search || data.name.toLowerCase().includes(this.search.toLowerCase()
@@ -189,7 +181,10 @@ export default {
       ) || data.email.toLowerCase().includes(this.search.toLowerCase()
       ) || data.phone_number.toLowerCase().includes(this.search.toLowerCase())
     },
-    user_add_form_submit () {
+    goEdit (row) {
+      this.$router.push({ name: 'users_userEdit', params: { name: row.name } })
+    },
+    add_user () {
       this.$refs.user_add_form.validate((pass) => {
         if (pass) {
           this.submit_loading = true
@@ -204,6 +199,18 @@ export default {
           })
         }
       })
+    },
+    user_del (ids = []) {
+      if (ids.length > 0) {
+        this.$http.delete('/accounts/users/', { data: { 'id': ids } }).then(response => {
+          this.$custom_message('success', response.res)
+          this.get_users()
+        }, error => {
+          this.$custom_message('error', error.res)
+        })
+      } else {
+        this.$custom_message('warning', '请选择要删除的用户!')
+      }
     }
   },
   created () {
@@ -211,27 +218,3 @@ export default {
   }
 }
 </script>
-<style>
-.container-fluid {
-  padding: 0 16px;
-}
-.app-content .content-title {
-  padding: 16px 0;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-}
-.app-content .content-title > span {
-  font-size: 16px;
-  flex: 1 1 auto;
-  border-left: 2px solid #88B7E0;
-  padding-left: 5px;
-}
-.app-content .content-title .content-search {
-  width: 150px !important;
-  margin-right: 10px;
-}
-</style>

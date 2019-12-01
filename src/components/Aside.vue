@@ -27,7 +27,8 @@ export default {
   name: 'Aside',
   data () {
     return {
-      menus: asideMenu
+      menus: asideMenu,
+      temp: {}
     }
   },
   methods: {
@@ -76,18 +77,36 @@ export default {
       }
     },
     initToggle (rname) {
-      this.menus.forEach(function (item) {
-        if (item.name === rname) {
+      this.menus.forEach((item) => {
+        if (rname.startsWith(item.name)) {
           item.active = true
+          this.temp = item
         } else {
           if (item.secMenu) {
-            item.secMenu.forEach(function (secitem) {
-              if (secitem.name === rname) {
-                secitem.active = true
-                item.is_expanded = true
-                item.active = true
-              }
-            })
+            if (Object.keys(this.temp).length > 0) {
+              item.secMenu.forEach(function (secitem) {
+                secitem.active = false
+              })
+              item.active = false
+              item.is_expanded = false
+            } else {
+              item.secMenu.forEach((secitem) => {
+                if (rname.startsWith(secitem.name)) {
+                  secitem.active = true
+                  item.is_expanded = true
+                  item.active = true
+                  this.temp = item
+                } else {
+                  secitem.active = false
+                  if (this.temp !== item) {
+                    item.is_expanded = false
+                    item.status = false
+                  }
+                }
+              })
+            }
+          } else {
+            item.status = false
           }
         }
       })

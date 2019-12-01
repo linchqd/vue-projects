@@ -12,7 +12,7 @@ let menus = [{
   active: false,
   is_expanded: false,
   secMenu: [
-    { url: '/accounts/users', name: 'users', text: '用户管理', icon: 'user', active: false },
+    { url: '/accounts/users/userList', name: 'users', text: '用户管理', icon: 'user', active: false },
     { url: '/accounts/groups', name: 'groups', text: '用户组管理', icon: 'users', active: false },
     { url: '/accounts/roles', name: 'roles', text: '角色管理', icon: 'user-secret', active: false },
     { url: '/accounts/permissions', name: 'permissions', text: '权限管理', icon: 'user-lock', active: false }

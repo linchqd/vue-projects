@@ -1,6 +1,9 @@
 html, body {
     margin: 0;
 }
+* {
+    box-sizing: border-box;
+}
 a {
     cursor: pointer;
 }
@@ -241,7 +244,107 @@ transition: background-color 0.3s ease;
   -webkit-box-shadow: -5px 5px 6px rgba(0, 0, 0, 0.1),5px -5px 6px rgba(0, 0, 0, 0.1);
   box-shadow: -5px 5px 6px rgba(0, 0, 0, 0.1),5px -5px 6px rgba(0, 0, 0, 0.1);
 }
-
+.container-fluid {
+  padding: 0 16px;
+}
+.app-content .content-title {
+  padding: 16px 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+.app-content .content-title .content-title-info {
+  font-size: 16px;
+  flex: 1 1 auto;
+  border-left: 2px solid #88B7E0;
+  padding-left: 5px;
+}
+.app-content .content-title .content-search {
+  width: 150px !important;
+  margin-right: 10px;
+}
+.app-content .content-title .content-title-goBack {
+    display: flex;
+    margin-right: 15px;
+    justify-content: center;
+    align-items: center;
+}
+.app-content .content-title .content-title-goBack span {
+    cursor: pointer;
+}
+.app-content .content-title .goBack-icon {
+    font-size: 18px;
+    margin-right: 6px;
+    align-self: center;
+    font-family: element-icons!important;
+    speak: none;
+    font-style: normal;
+    font-weight: 400;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    vertical-align: baseline;
+    display: inline-block;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    cursor: pointer;
+}
+.app-content .content-title .goBack-icon:before {
+    content: "\e6ea";
+}
+.app-content .content-content {
+    padding: 16px 0;
+}
+.app-content table {
+    width: 100% !important
+}
+.app-content table.noBorder td{
+    border: 0;
+}
+.app-content table.noBorder td > span {
+    color: #212529;
+}
+.app-content .table {
+    border: 1px solid #dee2e6;
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #212529;
+    border-collapse: collapse;
+    border-spacing: 2px;
+}
+.app-content .table th {
+    border: 0;
+    color: #999;
+    background-color: #F5F6FA;
+    font-weight: normal;
+    border-bottom: 1px solid #e1e6eb;
+    padding: .75rem;
+    text-align: left;
+}
+.app-content .table td {
+    border: 1px solid #dee2e6;
+    padding: .75rem;
+}
+.app-content .table td > span {
+    margin-left: 5px;
+    color: green;
+}
+.app-content .content-pagination {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 40px;
+}
+.app-content .content-tabs {
+    margin: 30px 0 0 0;
+}
 /*@import '../assets/css/app.css';*/
 .app-login {
   background-color: rgba(237, 240, 245, 0.8);

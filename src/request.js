@@ -12,6 +12,9 @@ function parseResponse (response, router) {
   } else if (response.status === 403) {
     router.push({ name: 'deny' })
     response['res'] = response.data.message
+  } else if (response.status === 404) {
+    router.push({ name: 'notFound' })
+    response['res'] = response.data.message
   } else if (response.data.hasOwnProperty('message')) {
     response['res'] = response.data.message
   } else if (response.data.hasOwnProperty('data')) {
