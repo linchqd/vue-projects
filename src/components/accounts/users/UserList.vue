@@ -4,9 +4,7 @@
       <span class="content-title-info">用户列表</span>
       <el-input size="mini" clearable placeholder="输入任意字段过滤" v-model="search" class="content-search"></el-input>
       <el-button type="primary" plain size="mini" @click.native="dialogFormVisible = true">添加</el-button>
-      <el-popconfirm style="padding-left: 10px;" @onConfirm="user_del(select_users)" confirmButtonText='确认' cancelButtonText='取消' icon="el-icon-info" iconColor="red" title="Are you sure?">
-        <el-button type="danger" plain size="mini" slot="reference">删除</el-button>
-      </el-popconfirm>
+      <el-button type="danger" plain size="mini" @click.native="user_del(select_users)">删除</el-button>
     </div>
     <div class="content-content">
       <el-table ref="multipleTable" @selection-change="handleSelectUser" :data="user_list.filter(filterUserTable).slice((current_page - 1) * page_size, page_size * current_page)" tooltip-effect="dark" style="width: 100%">
@@ -16,7 +14,7 @@
         <el-table-column prop="cname" label="用户别名" width="100" show-overflow-tooltip></el-table-column>
         <el-table-column prop="is_super" label="管理员" width="100" align="center">
           <template slot-scope="scope">
-            <span v-if="scope.row.is_super" style="color:green">是</span>
+            <span v-if="scope.row.is_super" style="color:red">是</span>
             <span v-else style="color:#409EFF">否</span>
           </template>
         </el-table-column>
@@ -31,9 +29,7 @@
         <el-table-column label="操作" width="200">
           <template slot-scope="scope">
             <el-button size="mini" plain type="primary" @click="goEdit(scope.row)">管理</el-button>
-            <el-popconfirm style="padding-left: 10px;" @onConfirm="user_del([scope.row.id])" confirmButtonText='确认' cancelButtonText='取消' icon="el-icon-info" iconColor="red" title="Are you sure?">
-              <el-button size="mini" plain type="danger" slot="reference">删除</el-button>
-            </el-popconfirm>
+            <el-button size="mini" plain type="danger" @click="user_del([scope.row.id])">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -51,7 +47,7 @@
     </div>
     <!--   add user dialog   -->
     <el-dialog title="添加用户" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
-        <el-form ref="user_add_form" :model="user_add_form" :rules="rules" label-width="80px">
+        <el-form ref="user_add_form" :model="user_add_form" :rules="rules" label-width="100px">
           <el-form-item prop="name" label="登录名">
               <el-input placeholder="username" v-model="user_add_form.name" auto-complete="off"></el-input>
           </el-form-item>
@@ -201,16 +197,18 @@ export default {
       })
     },
     user_del (ids = []) {
-      if (ids.length > 0) {
-        this.$http.delete('/accounts/users/', { data: { 'id': ids } }).then(response => {
-          this.$custom_message('success', response.res)
-          this.get_users()
-        }, error => {
-          this.$custom_message('error', error.res)
-        })
-      } else {
-        this.$custom_message('warning', '请选择要删除的用户!')
-      }
+      this.$confirm('You are sure?', '提示', { type: 'warning' }).then(() => {
+        if (ids.length > 0) {
+          this.$http.delete('/accounts/users/', { data: { 'id': ids } }).then(response => {
+            this.$custom_message('success', response.res)
+            this.get_users()
+          }, error => {
+            this.$custom_message('error', error.res)
+          })
+        } else {
+          this.$custom_message('warning', '请选择要删除的用户!')
+        }
+      }).catch(() => {})
     }
   },
   created () {

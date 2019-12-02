@@ -303,6 +303,7 @@ transition: background-color 0.3s ease;
 }
 .app-content table.noBorder td{
     border: 0;
+    border-bottom: 1px solid #dee2e6;
 }
 .app-content table.noBorder td > span {
     color: #212529;
@@ -314,6 +315,9 @@ transition: background-color 0.3s ease;
     color: #212529;
     border-collapse: collapse;
     border-spacing: 2px;
+}
+.app-content table .gutter {
+    display: block !important;
 }
 .app-content .table th {
     border: 0;

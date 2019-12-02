@@ -26,6 +26,20 @@ function parseResponse (response, router) {
   return Promise.reject(response)
 }
 
+function deepCopy (obj) {
+  let result = Array.isArray(obj) ? [] : {}
+  for (let key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      if (typeof obj[key] === 'object' && obj[key] !== null) {
+        result[key] = deepCopy(obj[key])
+      } else {
+        result[key] = obj[key]
+      }
+    }
+  }
+  return result
+}
+
 // assert login in
 function loggedIn () {
   let token = localStorage.getItem('token')
@@ -46,6 +60,7 @@ httpTools.install = function (Vue, router) {
     return parseResponse(error.response, router)
   })
   Vue.prototype.$http = axios
+  Vue.prototype.$deepCopy = deepCopy
   Vue.prototype.$custom_message = function (type, message) {
     this.$message({
       showClose: true,
