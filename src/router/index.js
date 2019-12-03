@@ -23,8 +23,11 @@ const routes = [
       { path: 'accounts/groups/groupList', name: 'groups_groupList', component: () => import('../components/accounts/groups/GroupList.vue'), meta: { permission: 'group_get_list' } },
       { path: 'accounts/groups/groupEdit/:name', name: 'groups_groupEdit', component: () => import('../components/accounts/groups/GroupManage.vue'), meta: { permission: 'group_get_list&group_update|group_get_list&group_modify' } },
       { path: 'accounts/groups/groupInfo/:name', name: 'groups_groupInfo', component: () => import('../components/accounts/groups/GroupManage.vue'), meta: { permission: 'group_get_list&group_update' } },
-      { path: 'accounts/roles', name: 'roles', component: () => import('../components/accounts/users/UserList.vue'), meta: { permission: 'roles_manage' } },
-      { path: 'accounts/permissions', name: 'permissions', component: () => import('../components/accounts/users/UserList.vue'), meta: { permission: 'permissions_manage' } }
+      { path: 'accounts/roles', redirect: { 'name': 'roles_roleList' }, meta: { permission: 'role_get_list' } },
+      { path: 'accounts/roles/roleList', name: 'roles_roleList', component: () => import('../components/accounts/roles/RoleList.vue'), meta: { permission: 'role_get_list' } },
+      { path: 'accounts/roles/roleEdit/:name', name: 'roles_roleEdit', component: () => import('../components/accounts/roles/RoleManage.vue'), meta: { permission: 'role_get_list&role_update|role_get_list&role_modify' } },
+      { path: 'accounts/roles/roleInfo/:name', name: 'roles_roleInfo', component: () => import('../components/accounts/roles/RoleManage.vue'), meta: { permission: 'role_get_list&role_update' } },
+      { path: 'accounts/permissions', name: 'permissions', component: () => import('../components/accounts/permissions/Permissions.vue'), meta: { permission: 'permission_get_list' } }
     ]
   },
   {

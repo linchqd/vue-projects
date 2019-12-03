@@ -149,7 +149,6 @@
                       <td>{{ item.name }}</td>
                       <td>{{ item.desc }}</td>
                       <td>
-                        <el-button size="mini" plain type="primary" @click.native="goPermissionDetail(item.name)">详细</el-button>
                         <template v-if="$route.name === 'users_userEdit'">
                         <el-button size="mini" plain type="warning" @click.native="removePermission(item.id)">移除</el-button>
                         </template>
@@ -463,9 +462,6 @@ export default {
     },
     goGroupDetail (name) {
       this.$router.push({ name: 'groups_groupInfo', params: { name: name } })
-    },
-    goPermissionDetail (name) {
-      this.$router.push({ name: 'permissions_permissionInfo', params: { name: name } })
     },
     goRoleDetail (name) {
       this.$router.push({ name: 'roles_roleInfo', params: { name: name } })
