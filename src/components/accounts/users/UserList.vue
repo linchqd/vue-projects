@@ -76,7 +76,7 @@
 </template>
 <script>
 export default {
-  name: 'accounts',
+  name: 'userList',
   data () {
     let checkPhone = (rule, value, callback) => {
       if (value === '') {

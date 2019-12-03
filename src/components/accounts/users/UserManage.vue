@@ -5,13 +5,15 @@
         <i class="goBack-icon"></i>
         <span>返回</span>
       </div>
-      <span class="content-title-info">角色信息</span>
-      <el-button v-if="userObj.is_super" type="danger" plain size="mini" @click.native="setOrMvAdmin">移除管理员</el-button>
-      <el-button v-else type="danger" plain size="mini" @click.native="setOrMvAdmin">设为管理员</el-button>
-      <el-button type="warning" plain size="mini" @click.native="resetPasswordShow">修改密码</el-button>
-      <el-button v-if="userObj.status" type="danger" plain size="mini" @click.native="enableOrDisable">禁用</el-button>
-      <el-button v-else type="success" plain size="mini" @click.native="enableOrDisable">启用</el-button>
-      <el-button type="primary" plain size="mini" @click.native="userUpdateFromVisible = true">编辑</el-button>
+      <span class="content-title-info">用户信息</span>
+      <template v-if="$route.name === 'users_userEdit'">
+        <el-button v-if="userObj.is_super" type="danger" plain size="mini" @click.native="setOrMvAdmin">移除管理员</el-button>
+        <el-button v-else type="danger" plain size="mini" @click.native="setOrMvAdmin">设为管理员</el-button>
+        <el-button type="warning" plain size="mini" @click.native="resetPasswordShow">修改密码</el-button>
+        <el-button v-if="userObj.status" type="danger" plain size="mini" @click.native="enableOrDisable">禁用</el-button>
+        <el-button v-else type="success" plain size="mini" @click.native="enableOrDisable">启用</el-button>
+        <el-button type="primary" plain size="mini" @click.native="userUpdateFromVisible = true">编辑</el-button>
+      </template>
     </div>
     <div class="content-content">
       <table class="table">
@@ -37,11 +39,13 @@
         </tbody>
       </table>
       <div class="content-tabs">
-        <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tabs v-model="activeName">
           <el-tab-pane label="用户组管理" name="hasGroups">
             <div class="content-title" style="padding: 0">
               <span class="content-title-info">用户组列表</span>
-              <el-button type="primary" plain size="mini" @click.native="joinGroupsShow">添加</el-button>
+              <template v-if="$route.name === 'users_userEdit'">
+              <el-button type="primary" plain size="mini" @click.native="joinGroups">添加</el-button>
+              </template>
             </div>
             <div class="content-content">
               <table class="table noBorder">
@@ -65,8 +69,10 @@
                       <td>{{ item.name }}</td>
                       <td>{{ item.desc }}</td>
                       <td>
-                        <el-button size="mini" plain type="primary">详细</el-button>
-                        <el-button size="mini" plain type="warning" slot="reference">移除</el-button>
+                        <el-button size="mini" plain type="primary" @click.native="goGroupDetail(item.name)">详细</el-button>
+                        <template v-if="$route.name === 'users_userEdit'">
+                          <el-button size="mini" plain type="warning" @click.native="exitGroups(item.id)">移除</el-button>
+                        </template>
                       </td>
                     </tr>
                   </template>
@@ -77,7 +83,9 @@
           <el-tab-pane label="关联的角色" name="hasRoles">
             <div class="content-title" style="padding: 0">
               <span class="content-title-info">角色列表</span>
-              <el-button type="primary" plain size="mini">添加</el-button>
+              <template v-if="$route.name === 'users_userEdit'">
+                <el-button type="primary" plain size="mini" @click.native="addRoles">添加</el-button>
+              </template>
             </div>
             <div class="content-content">
               <table class="table noBorder">
@@ -101,8 +109,10 @@
                       <td>{{ item.name }}</td>
                       <td>{{ item.desc }}</td>
                       <td>
-                        <el-button size="mini" plain type="primary">详细</el-button>
-                        <el-button size="mini" plain type="warning">移除</el-button>
+                        <el-button size="mini" plain type="primary" @click.native="goRoleDetail(item.name)">详细</el-button>
+                        <template v-if="$route.name === 'users_userEdit'">
+                          <el-button size="mini" plain type="warning" @click.native="removeRole(item.id)">移除</el-button>
+                        </template>
                       </td>
                     </tr>
                   </template>
@@ -113,7 +123,9 @@
           <el-tab-pane label="拥有的权限" name="hasPermissions">
             <div class="content-title" style="padding: 0">
               <span class="content-title-info">权限列表</span>
-              <el-button type="primary" plain size="mini">添加</el-button>
+              <template v-if="$route.name === 'users_userEdit'">
+                <el-button type="primary" plain size="mini" @click.native="addPermissions">添加</el-button>
+              </template>
             </div>
             <div class="content-content">
               <table class="table noBorder">
@@ -137,8 +149,10 @@
                       <td>{{ item.name }}</td>
                       <td>{{ item.desc }}</td>
                       <td>
-                        <el-button size="mini" plain type="primary">详细</el-button>
-                        <el-button size="mini" plain type="warning">移除</el-button>
+                        <el-button size="mini" plain type="primary" @click.native="goPermissionDetail(item.name)">详细</el-button>
+                        <template v-if="$route.name === 'users_userEdit'">
+                        <el-button size="mini" plain type="warning" @click.native="removePermission(item.id)">移除</el-button>
+                        </template>
                       </td>
                     </tr>
                   </template>
@@ -183,6 +197,20 @@
           <el-form-item prop="groups" label="选择用户组">
             <el-select v-model="joinGroupList" multiple clearable filterable size="small" style="width: 300px;" placeholder="选择用户组">
               <el-option v-for="item in userModifyFormModel.groups" :key="item.id" :label="item.name" :value="item.id"></el-option>
+            </el-select>
+          </el-form-item>
+        </template>
+        <template v-else-if="userModifyFormObj === 'addRole'">
+          <el-form-item prop="roles" label="选择角色">
+            <el-select v-model="hasRoleList" multiple clearable filterable size="small" style="width: 300px;" placeholder="选择角色">
+              <el-option v-for="item in userModifyFormModel.roles" :key="item.id" :label="item.name" :value="item.id"></el-option>
+            </el-select>
+          </el-form-item>
+        </template>
+        <template v-else-if="userModifyFormObj === 'addPermission'">
+          <el-form-item prop="permissions" label="选择权限">
+            <el-select v-model="hasPermissionList" multiple clearable filterable size="small" style="width: 300px;" placeholder="选择权限">
+              <el-option v-for="item in userModifyFormModel.permissions" :key="item.id" :label="item.desc" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
         </template>
@@ -231,6 +259,8 @@ export default {
     return {
       userObj: {},
       allGroups: [],
+      allRoles: [],
+      allPermissions: [],
       activeName: 'hasGroups',
       userUpdateFormTitle: '更新用户',
       userUpdateFormModel: '',
@@ -262,27 +292,22 @@ export default {
       userModifyFormLoading: false,
       userModifyFormObj: '',
       userModifyFormModel: '',
-      joinGroupList: []
+      joinGroupList: [],
+      hasRoleList: [],
+      hasPermissionList: []
     }
   },
   methods: {
     get_users (username) {
       this.$http.get(`/accounts/users/?name=${username}`).then(response => {
         this.userObj = response.res
+        this.userObj.groups = this.$sortArr(this.userObj.groups, 'id')
+        this.userObj.roles = this.$sortArr(this.userObj.roles, 'id')
+        this.userObj.permissions = this.$sortArr(this.userObj.permissions, 'id')
         this.userUpdateFormModel = this.$deepCopy(this.userObj)
       }, error => {
         this.$custom_message('error', error.res)
       })
-    },
-    get_groups () {
-      this.$http.get('/accounts/groups/').then(response => {
-        this.allGroups = response.res
-      }, error => {
-        this.$custom_message('error', error.res)
-      })
-    },
-    handleClick (tab, event) {
-      console.log(tab, event)
     },
     userUpdateFromSubmit () {
       this.$refs.userUpdateFrom.validate((pass) => {
@@ -313,17 +338,92 @@ export default {
       }
       this.userModifyFormVisible = true
     },
-    joinGroupsShow () {
-      this.userModifyFormTitle = '选择要加入的用户组'
-      this.userModifyFormObj = 'joinGroup'
-      this.userModifyFormModel = { 'groups': this.allGroups }
-      this.joinGroupList = []
-      for (let key in this.userObj.groups) {
-        if (this.userObj.groups.hasOwnProperty(key)) {
-          this.joinGroupList.push(this.userObj.groups[key].id)
+    joinGroups () {
+      this.$http.get('/accounts/groups/').then(response => {
+        this.allGroups = response.res
+        this.userModifyFormTitle = '选择要加入的用户组'
+        this.userModifyFormObj = 'joinGroup'
+        this.userModifyFormModel = { 'groups': this.allGroups }
+        this.joinGroupList = []
+        for (let key in this.userObj.groups) {
+          if (this.userObj.groups.hasOwnProperty(key)) {
+            this.joinGroupList.push(this.userObj.groups[key].id)
+          }
         }
-      }
-      this.userModifyFormVisible = true
+        this.userModifyFormVisible = true
+      }, error => {
+        this.$custom_message('error', error.res)
+      })
+    },
+    exitGroups (gid) {
+      this.$confirm('You are sure?', '提示', { type: 'warning' }).then(() => {
+        this.joinGroupList = []
+        for (let index in this.userObj.groups) {
+          if (this.userObj.groups.hasOwnProperty(index)) {
+            this.joinGroupList.push(this.userObj.groups[index].id)
+          }
+        }
+        delete this.joinGroupList[this.joinGroupList.indexOf(gid)]
+        this.modifyUser({ 'id': this.userObj.id, 'groups': this.joinGroupList })
+      }).catch(() => {})
+    },
+    addRoles () {
+      this.$http.get('/accounts/roles/').then(response => {
+        this.allRoles = response.res
+        this.userModifyFormTitle = '选择角色'
+        this.userModifyFormObj = 'addRole'
+        this.userModifyFormModel = { 'roles': this.allRoles }
+        this.hasRoleList = []
+        for (let key in this.userObj.roles) {
+          if (this.userObj.roles.hasOwnProperty(key)) {
+            this.hasRoleList.push(this.userObj.roles[key].id)
+          }
+        }
+        this.userModifyFormVisible = true
+      }, error => {
+        this.$custom_message('error', error.res)
+      })
+    },
+    removeRole (rid) {
+      this.$confirm('You are sure?', '提示', { type: 'warning' }).then(() => {
+        this.hasRoleList = []
+        for (let index in this.userObj.roles) {
+          if (this.userObj.roles.hasOwnProperty(index)) {
+            this.hasRoleList.push(this.userObj.roles[index].id)
+          }
+        }
+        delete this.hasRoleList[this.hasRoleList.indexOf(rid)]
+        this.modifyUser({ 'id': this.userObj.id, 'roles': this.hasRoleList })
+      }).catch(() => {})
+    },
+    addPermissions () {
+      this.$http.get('/accounts/permissions/').then(response => {
+        this.allPermissions = response.res
+        this.userModifyFormTitle = '选择权限'
+        this.userModifyFormObj = 'addPermission'
+        this.userModifyFormModel = { 'permissions': this.allPermissions }
+        this.hasPermissionList = []
+        for (let key in this.userObj.permissions) {
+          if (this.userObj.permissions.hasOwnProperty(key)) {
+            this.hasPermissionList.push(this.userObj.permissions[key].id)
+          }
+        }
+        this.userModifyFormVisible = true
+      }, error => {
+        this.$custom_message('error', error.res)
+      })
+    },
+    removePermission (pid) {
+      this.$confirm('You are sure?', '提示', { type: 'warning' }).then(() => {
+        this.hasPermissionList = []
+        for (let index in this.userObj.permissions) {
+          if (this.userObj.permissions.hasOwnProperty(index)) {
+            this.hasPermissionList.push(this.userObj.permissions[index].id)
+          }
+        }
+        delete this.hasPermissionList[this.hasPermissionList.indexOf(pid)]
+        this.modifyUser({ 'id': this.userObj.id, 'permissions': this.hasPermissionList })
+      }).catch(() => {})
     },
     userModifyFromSubmit () {
       this.$refs.userModifyFrom.validate((pass) => {
@@ -333,6 +433,10 @@ export default {
             this.modifyUser({ 'id': this.userObj.id, 'password': this.userModifyFormModel.password })
           } else if (this.userModifyFormObj === 'joinGroup') {
             this.modifyUser({ 'id': this.userObj.id, 'groups': this.joinGroupList })
+          } else if (this.userModifyFormObj === 'addRole') {
+            this.modifyUser({ 'id': this.userObj.id, 'roles': this.hasRoleList })
+          } else if (this.userModifyFormObj === 'addPermission') {
+            this.modifyUser({ 'id': this.userObj.id, 'permissions': this.hasPermissionList })
           }
           this.userModifyFormVisible = false
           this.userModifyFormLoading = false
@@ -356,11 +460,19 @@ export default {
       }, error => {
         this.$custom_message('error', error.res)
       })
+    },
+    goGroupDetail (name) {
+      this.$router.push({ name: 'groups_groupInfo', params: { name: name } })
+    },
+    goPermissionDetail (name) {
+      this.$router.push({ name: 'permissions_permissionInfo', params: { name: name } })
+    },
+    goRoleDetail (name) {
+      this.$router.push({ name: 'roles_roleInfo', params: { name: name } })
     }
   },
   created () {
     this.get_users(this.$route.params.name)
-    this.get_groups()
   },
   watch: {
     '$route': function () {

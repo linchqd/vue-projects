@@ -40,6 +40,18 @@ function deepCopy (obj) {
   return result
 }
 
+function compare (property) {
+  return function (a, b) {
+    let value1 = a[property]
+    let value2 = b[property]
+    return value1 - value2
+  }
+}
+
+function sortArr (Arr, property) {
+  return Arr.sort(compare(property))
+}
+
 // assert login in
 function loggedIn () {
   let token = localStorage.getItem('token')
@@ -61,6 +73,7 @@ httpTools.install = function (Vue, router) {
   })
   Vue.prototype.$http = axios
   Vue.prototype.$deepCopy = deepCopy
+  Vue.prototype.$sortArr = sortArr
   Vue.prototype.$custom_message = function (type, message) {
     this.$message({
       showClose: true,
