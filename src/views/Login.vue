@@ -63,7 +63,11 @@ export default {
           localStorage.setItem('nickname', response.res['nickname'])
           localStorage.setItem('username', response.res['username'])
           this.$custom_message('success', '登录成功!')
-          this.$router.push('/')
+          if (this.$route.query.hasOwnProperty('redirect')) {
+            this.$router.push(this.$route.query.redirect)
+          } else {
+            this.$router.push('/')
+          }
         }, error => {
           this.$custom_message('error', error.res)
         }).finally(() => { this.loading = false })

@@ -3,7 +3,19 @@
     <header class="app-header">
       <a class="app-header__logo" href="/">Docker管理平台</a>
       <a @click="ToMini" class="app-header_toggle"><font-awesome-icon icon="align-justify" size="lg"/></a>
-      <a @click="Logout" type="button">Logout</a>
+      <span style="flex: 1 1 auto;"></span>
+      <div class="app-header_userProfile">
+        <el-dropdown trigger="click" @command="handleCommand">
+          <span class="el-dropdown-link ">
+            <font-awesome-icon icon="user" fixed /> {{ loginUser }} <i class="el-icon-arrow-down el-icon--right"></i>
+          </span>
+          <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="logout">
+                <span>退出登录</span><font-awesome-icon icon="sign-out-alt" fixed />
+              </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </div>
     </header>
     <aside class="app-aside">
       <Aside />
@@ -22,7 +34,8 @@ export default {
   name: 'dashboard',
   data () {
     return {
-      mini: false
+      mini: false,
+      loginUser: ''
     }
   },
   components: {
@@ -32,15 +45,20 @@ export default {
     ToMini () { // 小图标展示
       this.mini = !this.mini
     },
-    Logout () {
-      localStorage.removeItem('token')
-      this.$router.push({ name: 'login' })
+    handleCommand (command) {
+      if (command === 'logout') {
+        localStorage.removeItem('token')
+        this.$router.push({ name: 'login', query: { redirect: this.$route.fullPath } })
+      }
     }
   },
   mounted () {
     window.onresize = () => {
       this.mini = document.body.clientWidth <= 1024
     }
+  },
+  created () {
+    this.loginUser = localStorage.getItem('nickname')
   }
 }
 </script>

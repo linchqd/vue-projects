@@ -9,23 +9,23 @@
     <div class="content-content">
       <el-table ref="multipleTable" @selection-change="handleSelectUser" :data="user_list.filter(filterUserTable).slice((current_page - 1) * page_size, page_size * current_page)" tooltip-effect="dark" style="width: 100%">
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="id" label="ID" width="60"></el-table-column>
-        <el-table-column prop="name" label="用户名" width="100" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="cname" label="用户别名" width="100" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="is_super" label="管理员" width="100" align="center">
+        <el-table-column prop="id" label="ID"></el-table-column>
+        <el-table-column prop="name" label="用户名" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="cname" label="用户别名" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="is_super" label="管理员" align="center">
           <template slot-scope="scope">
             <span v-if="scope.row.is_super" style="color:red">是</span>
             <span v-else style="color:#409EFF">否</span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态" width="100" align="center">
+        <el-table-column prop="status" label="状态" align="center">
           <template slot-scope="scope">
             <span v-if="scope.row.status" style="color:#409EFF">正常</span>
             <span v-else style="color:red">禁用</span>
           </template>
         </el-table-column>
-        <el-table-column prop="email" label="邮箱" width="160" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="phone_number" label="手机号码" width="160" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="email" label="邮箱" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="phone_number" label="手机号码" show-overflow-tooltip></el-table-column>
         <el-table-column label="操作" width="200">
           <template slot-scope="scope">
             <el-button size="mini" plain type="primary" @click="goEdit(scope.row)">管理</el-button>
