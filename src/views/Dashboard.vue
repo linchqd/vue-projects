@@ -7,7 +7,7 @@
       <div class="app-header_userProfile">
         <el-dropdown trigger="click" @command="handleCommand">
           <span class="el-dropdown-link ">
-            <font-awesome-icon icon="user" fixed /> {{ loginUser }} <i class="el-icon-arrow-down el-icon--right"></i>
+            <font-awesome-icon icon="user" fixed /> {{ $store.getters['loginModule/getUserInfo'].nickname }} <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="logout">
@@ -34,8 +34,7 @@ export default {
   name: 'dashboard',
   data () {
     return {
-      mini: false,
-      loginUser: ''
+      mini: false
     }
   },
   components: {
@@ -47,6 +46,7 @@ export default {
     },
     handleCommand (command) {
       if (command === 'logout') {
+        this.$store.dispatch('loginModule/setLoginStatus', false)
         localStorage.removeItem('token')
         this.$router.push({ name: 'login', query: { redirect: this.$route.fullPath } })
       }
@@ -56,9 +56,6 @@ export default {
     window.onresize = () => {
       this.mini = document.body.clientWidth <= 1024
     }
-  },
-  created () {
-    this.loginUser = localStorage.getItem('nickname')
   }
 }
 </script>

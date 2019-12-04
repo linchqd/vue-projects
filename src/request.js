@@ -1,5 +1,6 @@
 import axios from 'axios'
 import SERVER from './config/server.config'
+import store from './store'
 
 let httpTools = {
   install: null
@@ -54,14 +55,31 @@ function sortArr (Arr, property) {
 
 // assert login in
 function loggedIn () {
-  let token = localStorage.getItem('token')
-  return token && token.length === 32
+  let token = ''
+  if (store.getters['loginModule/getLoginStatus']) {
+    token = store.getters['loginModule/getUserInfo'].token
+    return true
+  } else {
+    token = localStorage.getItem('token')
+    if (token && token.length === 32) {
+      let userInfo = {}
+      let arr = ['token', 'is_super', 'roles', 'nickname', 'username']
+      for (let key in arr) {
+        userInfo[arr[key]] = localStorage.getItem(arr[key])
+      }
+      userInfo.roles = userInfo.roles.split(',')
+      store.dispatch('loginModule/setLoginStatus', true)
+      store.dispatch('loginModule/setUserInfo', userInfo)
+      return true
+    }
+  }
+  return false
 }
 
 httpTools.install = function (Vue, router) {
   // 请求前加token
   axios.interceptors.request.use(request => {
-    request.headers['X-TOKEN'] = localStorage.getItem('token')
+    request.headers['X-TOKEN'] = store.getters['loginModule/getUserInfo'].token
     request.timeout = SERVER.TIMEOUT
     return request
   })
@@ -88,7 +106,7 @@ httpTools.install = function (Vue, router) {
     }
   }
   router.beforeEach((to, from, next) => {
-    if (['/login', '/deny'].includes(to.path)) {
+    if (['/login', '/deny', '/404'].includes(to.path)) {
       next()
     } else if (to.matched.some(record => record.meta.permission)) {
       if (!loggedIn()) {

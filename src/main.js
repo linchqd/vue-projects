@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
+import store from './store/index.js'
 import router from './router'
 import ElementUI from 'element-ui'
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -18,5 +19,6 @@ Vue.config.productionTip = false
 
 new Vue({
   router,
+  store,
   render: h => h(App)
 }).$mount('#app')

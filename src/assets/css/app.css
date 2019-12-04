@@ -54,8 +54,8 @@ a {
 .app-header_userProfile .el-dropdown {
     color: #fff;
 }
-.app-header_userProfile .el-dropdown-menu {
-  margin-top: 0 !important;
+.app-header_userProfile  {
+  cursor: pointer;
 }
 .el-dropdown-menu {
     margin-top: 16px !important;

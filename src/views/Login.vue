@@ -57,12 +57,13 @@ export default {
         }
         this.loading = true
         this.$http.post('/accounts/login/', this.form).then(response => {
-          localStorage.setItem('token', response.res['token'])
-          localStorage.setItem('is_super', response.res['is_super'])
-          localStorage.setItem('permissions', response.res['permissions'])
-          localStorage.setItem('nickname', response.res['nickname'])
-          localStorage.setItem('username', response.res['username'])
           this.$custom_message('success', '登录成功!')
+          let arr = ['token', 'is_super', 'roles', 'nickname', 'username']
+          for (let key in arr) {
+            localStorage.setItem(arr[key], response.res[arr[key]])
+          }
+          this.$store.dispatch('loginModule/setLoginStatus', true)
+          this.$store.dispatch('loginModule/setUserInfo', response.res)
           if (this.$route.query.hasOwnProperty('redirect')) {
             this.$router.push(this.$route.query.redirect)
           } else {
