@@ -53,6 +53,15 @@ function sortArr (Arr, property) {
   return Arr.sort(compare(property))
 }
 
+function isIncludes (Arr, subArr) {
+  for (let item of subArr) {
+    if (!Arr.includes(item.trim())) {
+      return false
+    }
+  }
+  return true
+}
+
 // assert login in
 function loggedIn () {
   let token = ''
@@ -67,7 +76,7 @@ function loggedIn () {
       for (let key in arr) {
         userInfo[arr[key]] = localStorage.getItem(arr[key])
       }
-      userInfo.roles = userInfo.roles.split(',')
+      userInfo.roles = userInfo.roles !== null ? userInfo.roles.split(',') : []
       store.dispatch('loginModule/setLoginStatus', true)
       store.dispatch('loginModule/setUserInfo', userInfo)
       return true
@@ -100,10 +109,20 @@ httpTools.install = function (Vue, router) {
       type: type
     })
   }
-  Vue.prototype.assert_permission = function (permission) {
-    if (localStorage.getItem('is_super') === 'true') {
+  Vue.prototype.$assert_permission = function (permission) {
+    if (store.getters['loginModule/getUserInfo'].is_super === 'true') {
       return true
     }
+    let roles = store.getters['loginModule/getUserInfo'].roles
+    if (!roles || !permission) {
+      return false
+    }
+    for (let item of permission.split('|')) {
+      if (isIncludes(roles, item.split('&'))) {
+        return true
+      }
+    }
+    return false
   }
   router.beforeEach((to, from, next) => {
     if (['/login', '/deny', '/404'].includes(to.path)) {

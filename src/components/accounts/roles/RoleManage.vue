@@ -6,7 +6,7 @@
         <span>返回</span>
       </div>
       <span class="content-title-info">角色信息</span>
-      <template v-if="$route.name === 'roles_roleEdit'">
+      <template v-if="$route.name === 'roles_roleEdit' && $assert_permission('')">
         <el-button type="primary" plain size="mini" @click.native="updateRole">编辑</el-button>
       </template>
     </div>
@@ -31,7 +31,7 @@
           <el-tab-pane label="关联的用户" name="hasUsers">
             <div class="content-title" style="padding: 0">
               <span class="content-title-info">用户列表</span>
-              <template v-if="$route.name === 'roles_roleEdit'">
+              <template v-if="$route.name === 'roles_roleEdit' && $assert_permission('')">
                 <el-button type="primary" plain size="mini" @click.native="addUsers">添加</el-button>
               </template>
             </div>
@@ -115,7 +115,7 @@
           <el-tab-pane label="拥有的权限" name="hasPermissions">
             <div class="content-title" style="padding: 0">
               <span class="content-title-info">权限列表</span>
-              <template v-if="$route.name === 'roles_roleEdit'">
+              <template v-if="$route.name === 'roles_roleEdit' && $assert_permission('')">
                 <el-button type="primary" plain size="mini" @click.native="addPermissions">添加</el-button>
               </template>
             </div>
@@ -126,13 +126,13 @@
                     <th>ID</th>
                     <th>权限名称</th>
                     <th>权限描述</th>
-                    <th>操作</th>
+                    <th v-if="$route.name === 'roles_roleEdit' && $assert_permission('')">操作</th>
                   </tr>
                 </thead>
                 <tbody>
                   <template v-if="JSON.stringify(this.roleObj.permissions) === '[]'">
                     <tr>
-                      <td colspan="4" style="text-align: center">无数据</td>
+                      <td :colspan="$assert_permission('') ? 4 : 3" style="text-align: center">无数据</td>
                     </tr>
                   </template>
                   <template v-else>
@@ -141,7 +141,7 @@
                       <td>{{ item.name }}</td>
                       <td>{{ item.desc }}</td>
                       <td>
-                        <template v-if="$route.name === 'roles_roleEdit'">
+                        <template v-if="$route.name === 'roles_roleEdit' && $assert_permission('')">
                         <el-button size="mini" plain type="warning" @click.native="removePermission(item.id)">移除</el-button>
                         </template>
                       </td>

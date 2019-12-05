@@ -1,6 +1,7 @@
 <template>
     <ul class="app-menu">
-      <li v-for="(menu, index) in menus" @click="showToggle(menu)" :key="index" :class="[{'miniActive': menu.active}, {'active': menu.active && !menu.is_expanded}, {'treeview': menu.secMenu}, {'is-expanded': menu.is_expanded}]">
+      <template v-for="(menu, index) in menus">
+        <li :key="index" v-if="$assert_permission(menu.permission)" @click="showToggle(menu)" :class="[{'miniActive': menu.active}, {'active': menu.active && !menu.is_expanded}, {'treeview': menu.secMenu}, {'is-expanded': menu.is_expanded}]">
           <router-link v-if="!menu.secMenu" :class="['app-menu__item', {'active': menu.active} ]" :to="menu.url">
             <font-awesome-icon :icon="menu.icon" size="lg" fixed-width />
             <span class="app-menu__label">{{ menu.text }}</span>
@@ -11,13 +12,16 @@
             <font-awesome-icon icon="angle-right" fixed-width :class="{'fa-rotate-90': menu.is_expanded}" />
           </a>
           <ul v-if="menu.secMenu" class="treeview-menu">
-            <li v-for="(secMenu, index) in menu.secMenu" :key="index" @click.stop="showToggle(menu, secMenu)">
-              <router-link :class="['treeview-item', {'active': secMenu.active}]" :to="secMenu.url">
-                <font-awesome-icon :icon="secMenu.icon" size="sm" fixed-width />{{ secMenu.text }}
-              </router-link>
-            </li>
+            <template v-for="(secMenu, index) in menu.secMenu">
+              <li v-if="$assert_permission(secMenu.permission)" @click.stop="showToggle(menu, secMenu)" :key="index">
+                <router-link :class="['treeview-item', {'active': secMenu.active}]" :to="secMenu.url">
+                  <font-awesome-icon :icon="secMenu.icon" size="sm" fixed-width />{{ secMenu.text }}
+                </router-link>
+              </li>
+            </template>
           </ul>
       </li>
+      </template>
     </ul>
 </template>
 

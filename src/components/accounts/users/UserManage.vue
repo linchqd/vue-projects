@@ -7,8 +7,10 @@
       </div>
       <span class="content-title-info">用户信息</span>
       <template v-if="$route.name === 'users_userEdit'">
-        <el-button v-if="userObj.is_super" type="danger" plain size="mini" @click.native="setOrMvAdmin">移除管理员</el-button>
-        <el-button v-else type="danger" plain size="mini" @click.native="setOrMvAdmin">设为管理员</el-button>
+        <template v-if="$assert_permission('')">
+          <el-button v-if="userObj.is_super" type="danger" plain size="mini" @click.native="setOrMvAdmin">移除管理员</el-button>
+          <el-button v-else type="danger" plain size="mini" @click.native="setOrMvAdmin">设为管理员</el-button>
+        </template>
         <el-button type="warning" plain size="mini" @click.native="resetPasswordShow">修改密码</el-button>
         <el-button v-if="userObj.status" type="danger" plain size="mini" @click.native="enableOrDisable">禁用</el-button>
         <el-button v-else type="success" plain size="mini" @click.native="enableOrDisable">启用</el-button>
@@ -123,7 +125,7 @@
           <el-tab-pane label="拥有的权限" name="hasPermissions">
             <div class="content-title" style="padding: 0">
               <span class="content-title-info">权限列表</span>
-              <template v-if="$route.name === 'users_userEdit'">
+              <template v-if="$route.name === 'users_userEdit' && $assert_permission('')">
                 <el-button type="primary" plain size="mini" @click.native="addPermissions">添加</el-button>
               </template>
             </div>
@@ -134,13 +136,13 @@
                     <th>权限ID</th>
                     <th>权限名称</th>
                     <th>权限描述</th>
-                    <th>操作</th>
+                    <th v-if="$assert_permission('') && $route.name === 'users_userEdit'">操作</th>
                   </tr>
                 </thead>
                 <tbody>
                   <template v-if="JSON.stringify(this.userObj.permissions) === '[]'">
                     <tr>
-                      <td colspan="4" style="text-align: center">无数据</td>
+                      <td :colspan="$assert_permission('') ? 4 : 3" style="text-align: center">无数据</td>
                     </tr>
                   </template>
                   <template v-else>
@@ -148,10 +150,8 @@
                       <td>{{ item.id }}</td>
                       <td>{{ item.name }}</td>
                       <td>{{ item.desc }}</td>
-                      <td>
-                        <template v-if="$route.name === 'users_userEdit'">
+                      <td v-if="$assert_permission('') && $route.name === 'users_userEdit'">
                         <el-button size="mini" plain type="warning" @click.native="removePermission(item.id)">移除</el-button>
-                        </template>
                       </td>
                     </tr>
                   </template>
